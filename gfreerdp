@@ -1,0 +1,32 @@
+#!/usr/bin/wish
+
+set commandctl "/usr/bin/xfreerdp"
+global commandctl hostname usrname passwd
+
+proc screen {} {
+  frame .top -borderwidth 10
+  pack .top -fill x	
+  button .top.connect -text "Connect" -command connect
+
+  label .top.labelhost -text "Hostname:"
+  entry .top.hostname -width 40 -relief sunken -bd 2 -textvariable hostname
+
+  label .top.labelusr -text "Username:"
+  entry .top.username -width 40 -relief sunken -bd 2 -textvariable usrname
+  
+  label .top.labelpass -text "Password:"
+  entry .top.passwd -width 40 -relief sunken -bd 2 -show * -textvariable passwd
+  
+  pack .top.labelhost .top.hostname -fill x
+  pack .top.labelusr .top.username -fill x
+  pack .top.labelpass .top.passwd -fill x
+  pack .top.connect -fill x
+}
+screen
+
+proc connect {} {
+ global commandctl hostname usrname passwd
+#  exec $commandctl start & 
+#  exec $commandctl
+  exec $commandctl -wallpaper -themes /kbd:Italian /cert-ignore /size:1850x950 /v:$hostname /u:$usrname /p:$passwd
+}
