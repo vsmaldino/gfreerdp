@@ -6,11 +6,14 @@ global commandctl hostname usrname passwd
 proc screen {} {
   frame .top -borderwidth 10
   pack .top -fill x	
-  button .top.connect -text "Connect" -command connect
+  button .top.connect -text "Connect(wantReturn)" -command connect -bg green
 
+  set hostname "172.16.X..X"
   label .top.labelhost -text "Hostname:"
   entry .top.hostname -width 40 -relief sunken -bd 2 -textvariable hostname
-
+  #insert default template value
+ .top.hostname insert 0 $hostname
+  
   label .top.labelusr -text "Username:"
   entry .top.username -width 40 -relief sunken -bd 2 -textvariable usrname
   
@@ -21,12 +24,14 @@ proc screen {} {
   pack .top.labelusr .top.username -fill x
   pack .top.labelpass .top.passwd -fill x
   pack .top.connect -fill x
+
+  #want return
+  bind .  <Return> { connect }
 }
 screen
 
 proc connect {} {
  global commandctl hostname usrname passwd
-#  exec $commandctl start & 
-#  exec $commandctl
-  exec $commandctl -wallpaper -themes /kbd:Italian /cert-ignore /size:1850x950 /v:$hostname /u:$usrname /p:$passwd
+  # for xfreerdp ctrl + alt + enter to toggle fullscreen
+  exec $commandctl /f /toggle-fullscreen  /cert-ignore  /v:$hostname /u:$usrname /p:$passwd
 }
