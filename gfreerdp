@@ -8,7 +8,7 @@ proc screen {} {
   pack .top -fill x	
   button .top.connect -text "Connect(wantReturn)" -command connect -bg green
 
-  set hostname "172.16.X..X"
+  set hostname "172.16.X.X"
   label .top.labelhost -text "Hostname:"
   entry .top.hostname -width 40 -relief sunken -bd 2 -textvariable hostname
   #insert default template value
@@ -18,8 +18,10 @@ proc screen {} {
   entry .top.username -width 40 -relief sunken -bd 2 -textvariable usrname
   
   label .top.labelpass -text "Password:"
-  entry .top.passwd -width 40 -relief sunken -bd 2 -show * -textvariable passwd
-  
+  #entry .top.passwd -width 40 -relief sunken -bd 2 -show * -textvariable passwd
+  #show clear text
+  entry .top.passwd -width 40 -relief sunken -bd 2          -textvariable passwd
+
   pack .top.labelhost .top.hostname -fill x
   pack .top.labelusr .top.username -fill x
   pack .top.labelpass .top.passwd -fill x
@@ -32,6 +34,8 @@ screen
 
 proc connect {} {
  global commandctl hostname usrname passwd
+# 
+ .top.passwd configure -show *
   # for xfreerdp ctrl + alt + enter to toggle fullscreen
   exec $commandctl /f /toggle-fullscreen  /cert-ignore  /v:$hostname /u:$usrname /p:$passwd
 }
