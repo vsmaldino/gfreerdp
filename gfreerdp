@@ -12,7 +12,7 @@ proc screen {} {
   label .top.labelhost -text "Hostname:"
   entry .top.hostname -width 40 -relief sunken -bd 2 -textvariable hostname
   #insert default template value
- .top.hostname insert 0 $hostname
+  .top.hostname insert 0 $hostname
   
   label .top.labelusr -text "Username:"
   entry .top.username -width 40 -relief sunken -bd 2 -textvariable usrname
@@ -33,9 +33,11 @@ proc screen {} {
 screen
 
 proc connect {} {
- global commandctl hostname usrname passwd
-# 
- .top.passwd configure -show *
+  global commandctl hostname usrname passwd
+
+  #hide the paaword clear text 
+  .top.passwd configure -show *
+
   # for xfreerdp ctrl + alt + enter to toggle fullscreen
   exec $commandctl /f /toggle-fullscreen  /cert-ignore  /v:$hostname /u:$usrname /p:$passwd
 }
