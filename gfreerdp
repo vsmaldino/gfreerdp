@@ -6,27 +6,65 @@ global commandctl hostname usrname passwd
 proc screen {} {
   frame .top -borderwidth 10
   pack .top -fill x	
-  button .top.connect -text "Connect" -command connect
+  label .top.tips -text "Tips: Ctrl + Alt + Enter to toggle-fullscreen when in remote desktop" -font Courier
 
-  label .top.labelhost -text "Hostname:"
+  set hostname "192.168.31.218"
+  label .top.labelhost -text "Hostname:" -font bold
   entry .top.hostname -width 40 -relief sunken -bd 2 -textvariable hostname
-
-  label .top.labelusr -text "Username:"
+  #insert default template value
+  .top.hostname insert 0 $hostname
+  
+  label .top.labelusr -text "Username:" -font bold
   entry .top.username -width 40 -relief sunken -bd 2 -textvariable usrname
   
-  label .top.labelpass -text "Password:"
-  entry .top.passwd -width 40 -relief sunken -bd 2 -show * -textvariable passwd
-  
+  label .top.labelpass -text "Password:" -font bold
+  #entry .top.passwd -width 40 -relief sunken -bd 2 -show * -textvariable passwd
+  #show clear text
+  entry .top.passwd -width 40 -relief sunken -bd 2          -textvariable passwd
+
+  button .top.connect -text "Connect(wantReturn)" -command connect -bg yellow -activebackground green -font bold
+
+
+  pack .top.tips -fill x
   pack .top.labelhost .top.hostname -fill x
   pack .top.labelusr .top.username -fill x
   pack .top.labelpass .top.passwd -fill x
   pack .top.connect -fill x
+
+  #want return
+  bind .  <Return> { connect }
 }
 screen
 
 proc connect {} {
- global commandctl hostname usrname passwd
-#  exec $commandctl start & 
-#  exec $commandctl
-  exec $commandctl -wallpaper -themes /kbd:Italian /cert-ignore /size:1850x950 /v:$hostname /u:$usrname /p:$passwd
+  global commandctl hostname usrname passwd
+
+  #hide the paaword clear text 
+  .top.passwd configure -show *
+
+  #fetch the windows size
+  set winheight [winfo  screenheight .]
+  set winwidth  [winfo  screenwidth .]
+
+  # for xfreerdp ctrl + alt + enter to toggle fullscreen
+  try {
+
+        #exec $commandctl /w:$winwidth /h:$winheight /toggle-fullscreen  /cert-ignore  /v:$hostname /u:$usrname /p:$passwd
+        exec $commandctl /f /toggle-fullscreen  /cert-ignore  /v:$hostname /u:$usrname /p:$passwd
+      
+      } on {error} {} {
+
+        #extract keyword to judge whether exited normally
+        set isNormalExit [string first "Closed from X11" $::errorInfo]
+
+	if {$isNormalExit == -1 } {
+          
+	  #see the password is valid ??
+	  .top.passwd configure -show ""
+        
+	  tk_messageBox -title "remote Access  Error $isNormalExit" -message "$usrname:$passwd@$hostname,Are you OK ?" -detail $::errorInfo	  
+           
+         }
+       
+      }
 }
